@@ -3,172 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Polizei vor Ort - Ermittlungsterminal</title>
+    <title>Polizeidirektion Waldvilla // Tatort-Kommunikation</title>
     <style>
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #0d1117;
-            color: #c9d1d9;
+        /* CSS Reset & Font */
+        * {
+            box-sizing: border-box;
             margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif; /* Mehr wie im Foto */
+            background-color: #f0f2f5; /* Hellgrauer Hintergrund wie im Foto */
+            color: #333;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             padding: 20px;
+        }
+
+        /* Haupt-Container */
+        #app-container {
+            width: 1000px; /* Ähnliche Breite wie im Foto */
+            height: 800px;
+            background-color: #fff;
+            border: 1px solid #d3d3d3;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             display: flex;
             flex-direction: column;
-            height: 100vh;
-            box-sizing: border-box;
         }
-        /* Login-Bereich Styling */
-        #login-container {
-            margin: auto;
-            max-width: 400px;
-            width: 100%;
-            border: 2px solid #30363d;
-            background-color: #161b22;
-            padding: 30px;
-            border-radius: 5px;
-            text-align: center;
-            box-sizing: border-box;
+
+        /* --- HEADER (Direkt vom Foto adaptiert) --- */
+        header {
+            background-color: #1a2a47; /* Dunkelblau vom Foto */
+            color: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 50px;
         }
-        /* Chat-Bereich (anfänglich versteckt) */
-        #main-interface {
-            display: none;
+        #header-title {
+            font-weight: bold;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        #secret-tag {
+            background-color: #a94442; /* Rot vom Foto */
+            color: #fff;
+            padding: 4px 12px;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        /* --- INFO-BLOCK (Direkt vom Foto adaptiert) --- */
+        #info-block {
+            background-color: #f7f8fa; /* Heller Block */
+            border-bottom: 1px solid #e1e4e8;
+            padding: 20px 30px;
+            font-size: 13px;
+            color: #555;
+            display: flex;
+            gap: 40px;
+        }
+        .info-col {
+            display: flex;
             flex-direction: column;
-            height: 100%;
+            gap: 8px;
         }
+        .info-label {
+            font-weight: bold;
+            color: #1a2a47;
+            width: 130px;
+            display: inline-block;
+        }
+
+        /* --- CHAT-BEREICH --- */
+        #chat-interface {
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Chat-Ausgabe-Fenster */
         #chat-container {
             flex: 1;
-            border: 2px solid #30363d;
-            background-color: #161b22;
+            border: 1px solid #e1e4e8; /* Hellerer Rand */
+            background-color: #fcfcfc;
             padding: 20px;
             overflow-y: auto;
-            border-radius: 5px;
-            margin-bottom: 20px;
+            border-radius: 3px;
         }
+
+        /* Nachricht-Stile */
         .message {
             margin-bottom: 15px;
-            line-height: 1.5;
+            line-height: 1.6;
+            font-size: 14px;
         }
-        .player {
-            color: #58a6ff;
-            font-weight: bold;
-        }
-        .bot {
-            color: #ff7b72;
+        .message-prefix {
             font-weight: bold;
         }
         .system {
-            color: #8b949e;
+            color: #555;
             font-style: italic;
         }
-        .error-msg {
-            color: #f85149;
-            margin-top: 15px;
-            font-size: 14px;
+        .player {
+            color: #1a2a47; /* Dunkelblau für Spieler */
         }
-        .input-group {
+        .player-prefix {
+            color: #1a2a47;
+        }
+        .bot {
+            color: #333;
+        }
+        .bot-prefix {
+            color: #a94442; /* Kühle Rot-Nuance für Bot-Präfix */
+        }
+
+        /* --- EINGABE-BEREICH --- */
+        #input-area {
             display: flex;
-            gap: 10px;
+            gap: 15px;
+            align-items: center;
         }
-        input {
+        
+        /* Eingabefeld (Ohne Tipps!) */
+        input[type="text"] {
             flex: 1;
-            background-color: #0d1117;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 12px;
+            background-color: #fff;
+            border: 1px solid #b3b3b3; /* Dunklerer Rand */
+            color: #333;
+            padding: 12px 15px;
             font-family: inherit;
-            font-size: 16px;
-            border-radius: 5px;
+            font-size: 14px;
+            border-radius: 3px;
+            height: 40px;
         }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #1a2a47;
+        }
+
+        /* Senden-Button */
         button {
-            background-color: #21262d;
-            border: 1px solid #30363d;
-            color: #c9d1d9;
-            padding: 12px 24px;
+            background-color: #2c3e50; /* Button-Farbe vom Foto */
+            color: #fff;
+            border: none;
+            padding: 0 25px;
+            height: 40px;
             cursor: pointer;
             font-family: inherit;
             font-weight: bold;
-            border-radius: 5px;
+            font-size: 13px;
+            text-transform: uppercase;
+            border-radius: 3px;
+            letter-spacing: 1px;
         }
         button:hover {
-            background-color: #30363d;
+            background-color: #1a2a47;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background-color: #f7f8fa;
+            border-top: 1px solid #e1e4e8;
+            padding: 10px 30px;
+            font-size: 11px;
+            color: #888;
+            display: flex;
+            justify-content: space-between;
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. LOGIN INTERFACE -->
-    <div id="login-container">
-        <h3 style="color: #58a6ff; margin-top: 0;">ZUGANGSKONTROLLE</h3>
-        <p style="font-size: 14px; color: #8b949e;">Bitte geben Sie Ihre Autorisierungsdaten ein, um den Einsatz-Chat zu starten.</p>
-        <div style="margin-top: 20px;">
-            <input type="password" id="password-input" placeholder="Passwort eingeben..." onkeypress="handleLoginKeyPress(event)" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
-            <button onclick="checkPassword()" style="width: 100%;">Anmelden</button>
-        </div>
-        <div id="login-error" class="error-msg"></div>
-    </div>
+    <div id="app-container">
+        
+        <header>
+            <div id="header-title">POLIZEIDIREKTION WALDVILLA // TATORT-KOMMUNIKATION</div>
+            <div id="secret-tag">NUR FÜR DIENSTSTELLE // STRENG GEHEIM</div>
+        </header>
 
-    <!-- 2. CHAT INTERFACE (Wird nach Login sichtbar) -->
-    <div id="main-interface">
-        <h2 style="color: #58a6ff; margin-top: 0;">KREISPOLIZEIBEHÖRDE - EINSATZ CHAT</h2>
-        <div id="chat-container">
-            <div class="message system">Verbindung hergestellt. Bereit für Befehlsgabe.</div>
+        <div id="info-block">
+            <div class="info-col">
+                <div><span class="info-label">Dienststelle:</span>Polizeidirektion Waldvilla // Kriminalhauptkommissariat</div>
+                <div><span class="info-label">Fall-Zugehörigkeit:</span>Sonderkommission SOKO „Waldvilla“</div>
+            </div>
+            <div class="info-col">
+                <div><span class="info-label">System-Status:</span>Abfrage-Modul aktiv | Authentifiziert als Sondereinheit</div>
+                <div><span class="info-label">Aktuelle Zeit:</span>18.5.2026, 16:31:01</div>
+            </div>
         </div>
 
-        <div class="input-group">
-            <input type="text" id="user-input" placeholder="Befehl eingeben (z.B. Schreibtisch untersuchen)..." onkeypress="handleChatKeyPress(event)">
-            <button onclick="sendMessage()">Senden</button>
+        <div id="chat-interface">
+            
+            <div id="chat-container">
+                <div class="message system">Verbindung zum Tatort gesichert. Bereit für Protokoll-Befehle.</div>
+            </div>
+
+            <div id="input-area">
+                <input type="text" id="user-input" placeholder="" onkeypress="handleKeyPress(event)">
+                <button onclick="sendMessage()">Befehl Senden</button>
+            </div>
         </div>
+
+        <footer>
+            <div>STATUS: VERBINDUNG VERSCHLÜSSELT (SSL)</div>
+            <div>POLIZEIDIREKTION WALDVILLA © 2026</div>
+        </footer>
+
     </div>
 
     <script>
-        // --- LOGIN LOGIK ---
-        const CORRECT_PASSWORD = "18.05.2026_Waldvilla";
-
-        function handleLoginKeyPress(event) {
-            if (event.key === 'Enter') {
-                checkPassword();
-            }
-        }
-
-        function checkPassword() {
-            const passwordField = document.getElementById('password-input');
-            const errorField = document.getElementById('login-error');
-            
-            if (passwordField.value === CORRECT_PASSWORD) {
-                // Login erfolgreich: Login-Box verstecken, Chat zeigen
-                document.getElementById('login-container').style.display = 'none';
-                document.getElementById('main-interface').style.display = 'flex';
-                // Fokus direkt ins Chat-Eingabefeld setzen
-                document.getElementById('user-input').focus();
-            } else {
-                // Fehler anzeigen
-                errorField.textContent = "ZUGRIFF VERWEIGERT: Ungültige Anmeldedaten.";
-                passwordField.value = "";
-            }
-        }
-
-        // --- CHAT LOGIK ---
-        // --- HIER DEINE TABELLE (KEYWORDS & ANTWORTEN) EINTRAGEN ---
+        // --- DEINE TABELLE (KEYWORDS & ANTWORTEN) ---
         const database = [
             {
-                keywords: ["schreibtisch", "schreibtisch untersuchen", "auf dem schreibtisch"],
-                answer: "Auf dem Schreibtisch liegen folgende Gegenstände: Ein umgekipptes Kaffeeglas, ein Notizblock und ein Smartphone. Diese wurden gesichert und ins Labor geschickt. Sie finden die Daten in der Forensik-Datenbank unter der Asservatennummer A-404. \n\nIch brauche einen Moment, bis ich mich wieder melde."
+                keywords: ["schreibtisch", "untersuche schreibtisch", "auf dem schreibtisch"],
+                answer: "Tatort-Protokoll: Auf dem Schreibtisch befinden sich ein umgekipptes Kaffeeglas, ein Notizblock und ein Smartphone. Diese wurden gesichert und ins Labor überführt. Die Daten sind in der Forensik-Datenbank unter Asservatennummer A-404 abrufbar."
             },
             {
                 keywords: ["safe", "tresor", "safe öffnen", "wandschrank"],
-                answer: "Der Tresor im Wandschrank ist verschlossen. Es gibt keine sichtbaren Hebelspuren. Ohne Code können wir hier nichts machen. \n\nIch brauche einen Moment, bis ich mich wieder melde."
+                answer: "Sicherheits-Notiz: Der Tresor im Wandschrank ist verschlossen. Es gibt keine sichtbaren Hebelspuren. Ohne Code ist kein Zugriff möglich."
             },
             {
-                keywords: ["boden", "leiche", "opfer"],
-                answer: "Das Opfer liegt in Rückenlage neben dem Schreibtisch. Keine sichtbaren Kampfspuren im direkten Umfeld. Die Rechtsmedizin ist informiert. \n\nIch brauche einen Moment, bis ich mich wieder melde."
+                keywords: ["leiche", "opfer", "boden"],
+                answer: "Ermittlungs-Status: Das Opfer liegt in Rückenlage neben dem Schreibtisch. Keine sichtbaren Kampfspuren im direkten Umfeld. Die Rechtsmedizin ist eingetroffen."
             }
         ];
 
-        const defaultAnswer = "Hier ist nichts. \n\nIch brauche einen Moment, bis ich mich wieder melde.";
-        const busyAnswer = "Ich erledige erst die eine Sache. Schreiben Sie mir die andere Sache, wenn ich mit dieser Aufgabe fertig bin.";
+        // Standard-Antwort
+        const defaultAnswer = "Fehler: Befehl nicht im Protokoll gefunden. Überprüfen Sie die Eingabe.";
 
-        let isBusy = false;
-
-        function handleChatKeyPress(event) {
+        function handleKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
@@ -180,18 +250,11 @@
             
             if (query === "") return;
 
-            appendMessage("Spieler", query, "player");
-            inputField.value = "";
+            // 1. Nachricht des Spielers anzeigen
+            appendMessage("SOKO", query, "player");
+            inputField.value = ""; // Feld leeren
 
-            if (isBusy) {
-                setTimeout(() => {
-                    appendMessage("Polizei vor Ort", busyAnswer, "bot");
-                }, 500);
-                return;
-            }
-
-            isBusy = true;
-
+            // 2. Suche in der "Tabelle"
             let foundAnswer = null;
             const lowerQuery = query.toLowerCase();
 
@@ -210,14 +273,10 @@
                 foundAnswer = defaultAnswer;
             }
 
+            // 3. Antwort des Bots kühler/professioneller anzeigen
             setTimeout(() => {
-                appendMessage("Polizei vor Ort", foundAnswer, "bot");
-                
-                setTimeout(() => {
-                    isBusy = false;
-                }, 1000); 
-
-            }, 1200);
+                appendMessage("Polizei", foundAnswer, "bot");
+            }, 800);
         }
 
         function appendMessage(sender, text, cssClass) {
@@ -225,11 +284,14 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${cssClass}`;
             
-            const formattedText = text.replace(/\n/g, '<br>');
+            // Präfix-Klasse für verschiedene Sprecher
+            const prefixClass = cssClass + "-prefix";
             
-            messageDiv.innerHTML = `<span class="${cssClass}">${sender}:</span> ${formattedText}`;
+            // Text mit Präfix
+            messageDiv.innerHTML = `<span class="message-prefix ${prefixClass}">${sender}:</span> ${text}`;
             chatContainer.appendChild(messageDiv);
             
+            // Automatisch nach unten scrollen
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     </script>
