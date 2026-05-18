@@ -12,8 +12,8 @@
             padding: 0;
         }
         body {
-            font-family: Arial, sans-serif; /* Mehr wie im Foto */
-            background-color: #f0f2f5; /* Hellgrauer Hintergrund wie im Foto */
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
             color: #333;
             height: 100vh;
             display: flex;
@@ -24,7 +24,7 @@
 
         /* Haupt-Container */
         #app-container {
-            width: 1000px; /* Ähnliche Breite wie im Foto */
+            width: 1000px;
             height: 800px;
             background-color: #fff;
             border: 1px solid #d3d3d3;
@@ -33,9 +33,9 @@
             flex-direction: column;
         }
 
-        /* --- HEADER (Direkt vom Foto adaptiert) --- */
+        /* --- HEADER --- */
         header {
-            background-color: #1a2a47; /* Dunkelblau vom Foto */
+            background-color: #1a2a47;
             color: #fff;
             padding: 10px 20px;
             display: flex;
@@ -49,7 +49,7 @@
             letter-spacing: 0.5px;
         }
         #secret-tag {
-            background-color: #a94442; /* Rot vom Foto */
+            background-color: #a94442;
             color: #fff;
             padding: 4px 12px;
             font-size: 11px;
@@ -57,9 +57,9 @@
             text-transform: uppercase;
         }
 
-        /* --- INFO-BLOCK (Direkt vom Foto adaptiert) --- */
+        /* --- INFO-BLOCK --- */
         #info-block {
-            background-color: #f7f8fa; /* Heller Block */
+            background-color: #f7f8fa;
             border-bottom: 1px solid #e1e4e8;
             padding: 20px 30px;
             font-size: 13px;
@@ -79,19 +79,37 @@
             display: inline-block;
         }
 
-        /* --- CHAT-BEREICH --- */
-        #chat-interface {
+        /* --- INTERFACES (LOGIN & CHAT) --- */
+        #login-interface {
             flex: 1;
-            padding: 30px;
             display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fcfcfc;
+        }
+        #login-box {
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid #d3d3d3;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 3px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        #main-interface {
+            display: none; /* Wird erst nach Login aktiv */
+            flex: 1;
             flex-direction: column;
+            padding: 30px;
             gap: 20px;
         }
 
         /* Chat-Ausgabe-Fenster */
         #chat-container {
             flex: 1;
-            border: 1px solid #e1e4e8; /* Hellerer Rand */
+            border: 1px solid #e1e4e8;
             background-color: #fcfcfc;
             padding: 20px;
             overflow-y: auto;
@@ -112,7 +130,7 @@
             font-style: italic;
         }
         .player {
-            color: #1a2a47; /* Dunkelblau für Spieler */
+            color: #1a2a47;
         }
         .player-prefix {
             color: #1a2a47;
@@ -121,21 +139,25 @@
             color: #333;
         }
         .bot-prefix {
-            color: #a94442; /* Kühle Rot-Nuance für Bot-Präfix */
+            color: #a94442;
+        }
+        .error-msg {
+            color: #a94442;
+            margin-top: 15px;
+            font-size: 13px;
+            font-weight: bold;
         }
 
-        /* --- EINGABE-BEREICH --- */
-        #input-area {
+        /* --- INPUTS & BUTTONS --- */
+        .input-group {
             display: flex;
             gap: 15px;
             align-items: center;
         }
-        
-        /* Eingabefeld (Ohne Tipps!) */
-        input[type="text"] {
+        input[type="text"], input[type="password"] {
             flex: 1;
             background-color: #fff;
-            border: 1px solid #b3b3b3; /* Dunklerer Rand */
+            border: 1px solid #b3b3b3;
             color: #333;
             padding: 12px 15px;
             font-family: inherit;
@@ -143,14 +165,12 @@
             border-radius: 3px;
             height: 40px;
         }
-        input[type="text"]:focus {
+        input:focus {
             outline: none;
             border-color: #1a2a47;
         }
-
-        /* Senden-Button */
         button {
-            background-color: #2c3e50; /* Button-Farbe vom Foto */
+            background-color: #2c3e50;
             color: #fff;
             border: none;
             padding: 0 25px;
@@ -199,14 +219,25 @@
             </div>
         </div>
 
-        <div id="chat-interface">
-            
+        <div id="login-interface">
+            <div id="login-box">
+                <h3 style="color: #1a2a47; margin-bottom: 10px; font-size: 16px;">ZUGANGSKONTROLLE DETEKTIV-TERMINAL</h3>
+                <p style="font-size: 13px; color: #666; margin-bottom: 25px;">Geben Sie Ihre Autorisierungsdaten ein, um die gesicherte Verbindung herzustellen.</p>
+                <div style="display: flex; flex-direction: column; gap: 12px;">
+                    <input type="password" id="password-input" placeholder="" onkeypress="handleLoginKeyPress(event)">
+                    <button onclick="checkPassword()">Verbindung aufbauen</button>
+                </div>
+                <div id="login-error" class="error-msg"></div>
+            </div>
+        </div>
+
+        <div id="main-interface">
             <div id="chat-container">
                 <div class="message system">Verbindung zum Tatort gesichert. Bereit für Protokoll-Befehle.</div>
             </div>
 
-            <div id="input-area">
-                <input type="text" id="user-input" placeholder="" onkeypress="handleKeyPress(event)">
+            <div class="input-group">
+                <input type="text" id="user-input" placeholder="" onkeypress="handleChatKeyPress(event)">
                 <button onclick="sendMessage()">Befehl Senden</button>
             </div>
         </div>
@@ -219,7 +250,30 @@
     </div>
 
     <script>
-        // --- DEINE TABELLE (KEYWORDS & ANTWORTEN) ---
+        // --- LOGIN LOGIK ---
+        const CORRECT_PASSWORD = "18.05.2026_Waldvilla";
+
+        function handleLoginKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        }
+
+        function checkPassword() {
+            const passwordField = document.getElementById('password-input');
+            const errorField = document.getElementById('login-error');
+            
+            if (passwordField.value === CORRECT_PASSWORD) {
+                document.getElementById('login-interface').style.display = 'none';
+                document.getElementById('main-interface').style.display = 'flex';
+                document.getElementById('user-input').focus();
+            } else {
+                errorField.textContent = "ZUGRIFF VERWEIGERT: Ungültiges Krypto-Token.";
+                passwordField.value = "";
+            }
+        }
+
+        // --- CHAT LOGIK & TABELLE ---
         const database = [
             {
                 keywords: ["schreibtisch", "untersuche schreibtisch", "auf dem schreibtisch"],
@@ -235,10 +289,9 @@
             }
         ];
 
-        // Standard-Antwort
-        const defaultAnswer = "Fehler: Befehl nicht im Protokoll gefunden. Überprüfen Sie die Eingabe.";
+        const defaultAnswer = "Fehler: Befehl nicht im Protokoll gefunden. Überprüfen Sie die Eingabe ODER "nichts von interesse hier"";
 
-        function handleKeyPress(event) {
+        function handleChatKeyPress(event) {
             if (event.key === 'Enter') {
                 sendMessage();
             }
@@ -250,11 +303,9 @@
             
             if (query === "") return;
 
-            // 1. Nachricht des Spielers anzeigen
             appendMessage("SOKO", query, "player");
-            inputField.value = ""; // Feld leeren
+            inputField.value = "";
 
-            // 2. Suche in der "Tabelle"
             let foundAnswer = null;
             const lowerQuery = query.toLowerCase();
 
@@ -273,7 +324,6 @@
                 foundAnswer = defaultAnswer;
             }
 
-            // 3. Antwort des Bots kühler/professioneller anzeigen
             setTimeout(() => {
                 appendMessage("Polizei", foundAnswer, "bot");
             }, 800);
@@ -284,14 +334,10 @@
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${cssClass}`;
             
-            // Präfix-Klasse für verschiedene Sprecher
             const prefixClass = cssClass + "-prefix";
-            
-            // Text mit Präfix
             messageDiv.innerHTML = `<span class="message-prefix ${prefixClass}">${sender}:</span> ${text}`;
             chatContainer.appendChild(messageDiv);
             
-            // Automatisch nach unten scrollen
             chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     </script>
