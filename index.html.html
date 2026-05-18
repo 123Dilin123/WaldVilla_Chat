@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Polizei vor Ort - Ermittlungsterminal</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        /* Login-Bereich Styling */
+        #login-container {
+            margin: auto;
+            max-width: 400px;
+            width: 100%;
+            border: 2px solid #30363d;
+            background-color: #161b22;
+            padding: 30px;
+            border-radius: 5px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        /* Chat-Bereich (anfänglich versteckt) */
+        #main-interface {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+        }
+        #chat-container {
+            flex: 1;
+            border: 2px solid #30363d;
+            background-color: #161b22;
+            padding: 20px;
+            overflow-y: auto;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .message {
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        .player {
+            color: #58a6ff;
+            font-weight: bold;
+        }
+        .bot {
+            color: #ff7b72;
+            font-weight: bold;
+        }
+        .system {
+            color: #8b949e;
+            font-style: italic;
+        }
+        .error-msg {
+            color: #f85149;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        input {
+            flex: 1;
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 12px;
+            font-family: inherit;
+            font-size: 16px;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #21262d;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            padding: 12px 24px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #30363d;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 1. LOGIN INTERFACE -->
+    <div id="login-container">
+        <h3 style="color: #58a6ff; margin-top: 0;">ZUGANGSKONTROLLE</h3>
+        <p style="font-size: 14px; color: #8b949e;">Bitte geben Sie Ihre Autorisierungsdaten ein, um den Einsatz-Chat zu starten.</p>
+        <div style="margin-top: 20px;">
+            <input type="password" id="password-input" placeholder="Passwort eingeben..." onkeypress="handleLoginKeyPress(event)" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+            <button onclick="checkPassword()" style="width: 100%;">Anmelden</button>
+        </div>
+        <div id="login-error" class="error-msg"></div>
+    </div>
+
+    <!-- 2. CHAT INTERFACE (Wird nach Login sichtbar) -->
+    <div id="main-interface">
+        <h2 style="color: #58a6ff; margin-top: 0;">KREISPOLIZEIBEHÖRDE - EINSATZ CHAT</h2>
+        <div id="chat-container">
+            <div class="message system">Verbindung hergestellt. Bereit für Befehlsgabe.</div>
+        </div>
+
+        <div class="input-group">
+            <input type="text" id="user-input" placeholder="Befehl eingeben (z.B. Schreibtisch untersuchen)..." onkeypress="handleChatKeyPress(event)">
+            <button onclick="sendMessage()">Senden</button>
+        </div>
+    </div>
+
+    <script>
+        // --- LOGIN LOGIK ---
+        const CORRECT_PASSWORD = "18.05.2026_Waldvilla";
+
+        function handleLoginKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkPassword();
+            }
+        }
+
+        function checkPassword() {
+            const passwordField = document.getElementById('password-input');
+            const errorField = document.getElementById('login-error');
+            
+            if (passwordField.value === CORRECT_PASSWORD) {
+                // Login erfolgreich: Login-Box verstecken, Chat zeigen
+                document.getElementById('login-container').style.display = 'none';
+                document.getElementById('main-interface').style.display = 'flex';
+                // Fokus direkt ins Chat-Eingabefeld setzen
+                document.getElementById('user-input').focus();
+            } else {
+                // Fehler anzeigen
+                errorField.textContent = "ZUGRIFF VERWEIGERT: Ungültige Anmeldedaten.";
+                passwordField.value = "";
+            }
+        }
+
+        // --- CHAT LOGIK ---
+        // --- HIER DEINE TABELLE (KEYWORDS & ANTWORTEN) EINTRAGEN ---
+        const database = [
+            {
+                keywords: ["schreibtisch", "schreibtisch untersuchen", "auf dem schreibtisch"],
+                answer: "Auf dem Schreibtisch liegen folgende Gegenstände: Ein umgekipptes Kaffeeglas, ein Notizblock und ein Smartphone. Diese wurden gesichert und ins Labor geschickt. Sie finden die Daten in der Forensik-Datenbank unter der Asservatennummer A-404. \n\nIch brauche einen Moment, bis ich mich wieder melde."
+            },
+            {
+                keywords: ["safe", "tresor", "safe öffnen", "wandschrank"],
+                answer: "Der Tresor im Wandschrank ist verschlossen. Es gibt keine sichtbaren Hebelspuren. Ohne Code können wir hier nichts machen. \n\nIch brauche einen Moment, bis ich mich wieder melde."
+            },
+            {
+                keywords: ["boden", "leiche", "opfer"],
+                answer: "Das Opfer liegt in Rückenlage neben dem Schreibtisch. Keine sichtbaren Kampfspuren im direkten Umfeld. Die Rechtsmedizin ist informiert. \n\nIch brauche einen Moment, bis ich mich wieder melde."
+            }
+        ];
+
+        const defaultAnswer = "Hier ist nichts. \n\nIch brauche einen Moment, bis ich mich wieder melde.";
+        const busyAnswer = "Ich erledige erst die eine Sache. Schreiben Sie mir die andere Sache, wenn ich mit dieser Aufgabe fertig bin.";
+
+        let isBusy = false;
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        function sendMessage() {
+            const inputField = document.getElementById('user-input');
+            const query = inputField.value.trim();
+            
+            if (query === "") return;
+
+            appendMessage("Spieler", query, "player");
+            inputField.value = "";
+
+            if (isBusy) {
+                setTimeout(() => {
+                    appendMessage("Polizei vor Ort", busyAnswer, "bot");
+                }, 500);
+                return;
+            }
+
+            isBusy = true;
+
+            let foundAnswer = null;
+            const lowerQuery = query.toLowerCase();
+
+            for (const entry of database) {
+                const match = entry.keywords.some(keyword => 
+                    lowerQuery.includes(keyword.toLowerCase()) || keyword.toLowerCase().includes(lowerQuery)
+                );
+                
+                if (match) {
+                    foundAnswer = entry.answer;
+                    break;
+                }
+            }
+
+            if (!foundAnswer) {
+                foundAnswer = defaultAnswer;
+            }
+
+            setTimeout(() => {
+                appendMessage("Polizei vor Ort", foundAnswer, "bot");
+                
+                setTimeout(() => {
+                    isBusy = false;
+                }, 1000); 
+
+            }, 1200);
+        }
+
+        function appendMessage(sender, text, cssClass) {
+            const chatContainer = document.getElementById('chat-container');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${cssClass}`;
+            
+            const formattedText = text.replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = `<span class="${cssClass}">${sender}:</span> ${formattedText}`;
+            chatContainer.appendChild(messageDiv);
+            
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    </script>
+</body>
+</html>
